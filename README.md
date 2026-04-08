@@ -1,4 +1,4 @@
-# Transcriberino
+<h1 align="center">Transcriberino</h1>
 
 ![Transcriberino](TranscriberinoFranco.png)
 
