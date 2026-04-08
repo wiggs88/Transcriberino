@@ -1,0 +1,14 @@
+.DS_Store
+/.build
+/Transcriberino.xcodeproj
+*.xcuserstate
+*.xcuserdatad
+*.xcworkspace
+xcuserdata
+.swiftpm/
+*.app
+DerivedData/
+Packages/
+*.ipa
+*.dSYM.zip
+*.dSYM
