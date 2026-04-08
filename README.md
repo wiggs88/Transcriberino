@@ -1,5 +1,7 @@
 # Transcriberino
 
+![Transcriberino](TranscriberinoFranco.png)
+
 A lightweight, fully local macOS dictation utility. Press a hotkey to record speech, transcribe it locally with parakeet-mlx, clean the text, and copy it to your clipboard. No cloud, no telemetry, no subscriptions.
 
 ## Features
