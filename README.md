@@ -116,46 +116,33 @@ static let indicatorAnimationDuration: TimeInterval = 0.15
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────┐
-│            TranscriberinoApp                 │
-│  Entry point, permission checks              │
-└─────────────────────┬───────────────────────┘
-                      │
-┌─────────────────────▼───────────────────────┐
-│           PipelineCoordinator                 │
-│  State machine: idle → recording →           │
-│  processing → injecting → ready              │
-└─────┬─────────┬─────────┬─────────┬─────────┘
-      │         │         │         │
-      ▼         ▼         ▼         ▼
-┌──────────┐ ┌──────────┐ ┌────────┐ ┌────────────────┐
-│ HotkeyMgr │ │Recording │ │Transcr │ │  CleanupService │
-│           │ │Controller│ │Service │ │                 │
-└──────────┘ └──────────┘ └────────┘ └───────┬────────┘
-                                             │
-                                    ┌────────▼────────┐
-                                    │ TextInjection    │
-                                    │ (clipboard)      │
-                                    └─────────────────┘
+```mermaid
+flowchart TD
+    A[🎤 Microphone] --> B[RecordingController]
+    B --> C[TranscriptionService]
+    C --> D[CleanupService]
+    D --> E[📋 Clipboard]
+    
+    F[⌨️ Hotkey] --> A
+    
+    G[PipelineCoordinator] --> B
+    G --> C
+    G --> D
+    G --> E
+    
+    H[IndicatorWindow] <--> G
 ```
 
 ### Components
 
-- **HotkeyManager** - Registers global hotkey via HotKey library
-- **RecordingController** - Captures audio using AVAudioEngine at 16kHz mono
-- **TranscriptionService** - Wraps parakeet-mlx CLI
-- **CleanupService** - Rule-based text cleanup
-- **TextInjectionService** - Copies cleaned text to clipboard
-- **IndicatorWindow** - Floating status indicator with audio-reactive animation
-
-## Troubleshooting
-
-| Problem | Solution |
-|---------|----------|
-| Hotkey doesn't work | Check Accessibility permissions in System Settings |
-| No transcription | Verify parakeet-mlx is installed (`which parakeet-mlx`) |
-| Slow transcription | Consider downloading a smaller model |
+| Component | Description |
+|-----------|-------------|
+| `HotkeyManager` | Global hotkey (Option+D) via HotKey library |
+| `RecordingController` | AVAudioEngine capture at 16kHz mono |
+| `TranscriptionService` | Wraps parakeet-mlx CLI |
+| `CleanupService` | Rule-based filler word removal |
+| `TextInjectionService` | Clipboard copy |
+| `IndicatorWindow` | Floating audio-reactive UI |
 
 ## License
 
