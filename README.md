@@ -1,23 +1,28 @@
 <h1 align="center">Transcriberino</h1>
 
-![Transcriberino](TranscriberinoFranco.png)
+<p align="center">
+  <img src="TranscriberinoFranco.png" alt="Transcriberino" width="600"/>
+</p>
 
-A lightweight, fully local macOS dictation utility. Press a hotkey to record speech, transcribe it locally with parakeet-mlx, clean the text, and copy it to your clipboard. No cloud, no telemetry, no subscriptions.
+<p align="center">
+  A lightweight, fully local macOS dictation utility. No cloud, no telemetry, no subscriptions.
+</p>
+
+---
 
 ## Features
 
-- **Fully local transcription** - Uses parakeet-mlx running on your machine
-- **Global hotkey** - Press Option+D from anywhere to start/stop recording
-- **Audio-reactive UI** - Visual feedback with a floating indicator
-- **Smart text cleanup** - Rule-based cleanup of filler words and formatting
-- **Clipboard integration** - Text is copied to your clipboard, ready to paste
+| Feature | Description |
+|---------|-------------|
+| **Fully Local** | Uses parakeet-mlx running entirely on your machine |
+| **Global Hotkey** | Press `⌥` + `D` from anywhere to start/stop recording |
+| **Audio-Reactive UI** | Floating indicator with animated visual feedback |
+| **Smart Cleanup** | Removes filler words, normalizes formatting |
+| **Instant Paste** | Text copied to clipboard, ready to paste |
 
-## Requirements
+---
 
-- macOS 13.0+
-- parakeet-mlx (installed via uv)
-
-## Installation
+## Quick Start
 
 ### 1. Install parakeet-mlx
 
@@ -25,94 +30,59 @@ A lightweight, fully local macOS dictation utility. Press a hotkey to record spe
 uv tool install parakeet-mlx
 ```
 
-This installs parakeet-mlx to `~/.local/bin/parakeet-mlx`.
-
-### 2. Download a model
-
-parakeet-mlx will automatically download the default model on first run. To use a different model:
+### 2. Build & Run
 
 ```bash
-# List available models
-parakeet-mlx list-models
-
-# Download a specific model
-parakeet-mlx download-model <model-name>
-```
-
-### 3. Build & Run
-
-```bash
-swift build
-swift run
+swift build && swift run
 ```
 
 Or open in Xcode:
-
 ```bash
 open Package.swift
 ```
 
-### 4. Grant Permissions
+### 3. Grant Permissions
 
 On first launch, macOS will prompt for:
+- **Microphone** — required for recording
+- **Accessibility** — required for clipboard operations
 
-- **Microphone access** - Required for recording speech
-- **Accessibility access** - Required for clipboard operations
-
-Go to **System Settings > Privacy & Security** to grant these if the prompts don't appear.
+---
 
 ## Usage
 
-1. Press **Option+D** to start recording - a floating red "Listening..." indicator appears
-2. Speak your text
-3. Press **Option+D** again to stop - indicator turns yellow "Processing..."
-4. Text is cleaned and copied to your clipboard - indicator turns green "Ready"
-5. Paste with Cmd+V
+| Step | Action | Indicator |
+|------|--------|----------|
+| 1 | Press `⌥` + `D` | 🔴 Listening... |
+| 2 | Speak your text | (recording) |
+| 3 | Press `⌥` + `D` again | 🟡 Processing... |
+| 4 | Text copied to clipboard | 🟢 Ready |
+| 5 | `⌘` + `V` to paste | — |
+
+---
 
 ## Configuration
 
-Edit `Transcriberino/Config/Config.swift` to customize behavior:
-
-### Hotkey
+Edit `Transcriberino/Config/Config.swift`:
 
 ```swift
-static let hotkeyKeyCode: UInt32 = UInt32(kVK_ANSI_D)  // 'D' key
-static let hotkeyModifiers: NSEvent.ModifierFlags = .option  // Option+D
-```
+// Hotkey: ⌥ + D
+static let hotkeyKeyCode: UInt32 = UInt32(kVK_ANSI_D)
+static let hotkeyModifiers: NSEvent.ModifierFlags = .option
 
-### Transcription
-
-```swift
+// Transcription
 static let parakeetBinaryPath = "~/.local/bin/parakeet-mlx"
 static let transcriptionTimeoutSeconds: TimeInterval = 30
+
+// Recording
+static let sampleRate: Double = 16000
+static let minimumRecordingDuration: TimeInterval = 0.5
+
+// Indicator position
+static let indicatorTopOffset: CGFloat = 40
 ```
 
-### Recording
-
-```swift
-static let sampleRate: Double = 16000  // Audio sample rate
-static let minimumRecordingDuration: TimeInterval = 0.5  // Ignore recordings shorter than this
-```
-
-### Text Cleanup
-
-```swift
-// Text cleanup is rule-based (no configuration needed)
-```
-
-Fast mode applies rule-based cleanup:
-- Removes filler words (um, uh, like, basically, actually)
-- Collapses repeated words
-- Normalizes whitespace
-- Capitalizes sentences
-
-### Indicator Window
-
-```swift
-static let indicatorTopOffset: CGFloat = 40  // Distance from top of screen
-static let indicatorCornerRadius: CGFloat = 12
-static let indicatorAnimationDuration: TimeInterval = 0.15
-```
+---
 
 ## Architecture
 
@@ -135,15 +105,28 @@ flowchart TD
 
 ### Components
 
-| Component | Description |
-|-----------|-------------|
-| `HotkeyManager` | Global hotkey (Option+D) via HotKey library |
+| Component | Role |
+|-----------|------|
+| `HotkeyManager` | Global hotkey (⌥+D) via HotKey library |
 | `RecordingController` | AVAudioEngine capture at 16kHz mono |
 | `TranscriptionService` | Wraps parakeet-mlx CLI |
-| `CleanupService` | Rule-based filler word removal |
-| `TextInjectionService` | Clipboard copy |
+| `CleanupService` | Removes filler words, normalizes text |
+| `TextInjectionService` | Copies result to clipboard |
 | `IndicatorWindow` | Floating audio-reactive UI |
+
+---
+
+## Requirements
+
+- macOS 13.0+ (Apple Silicon)
+- parakeet-mlx (`uv tool install parakeet-mlx`)
+
+---
 
 ## License
 
 MIT
+
+---
+
+if u get here and read this make sure to say hi to TCHURRI
